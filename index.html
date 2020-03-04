@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-100878294-2"></script>
+		<script>
+		  window.dataLayer = window.dataLayer || [];
+		  function gtag(){dataLayer.push(arguments);}
+		  gtag('js', new Date());
+		
+		  gtag('config', 'UA-100878294-2');
+		</script>
+		<meta charset="utf8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>TouchStadia</title>
+        <style>
+            body {
+                text-align: center;
+                margin: 0;
+            }
+            input {
+                width: 100px;
+            }
+            .logo-container {
+                margin-bottom: 4px;
+                color: #ffffff;
+                background-color: #ff7f2a;
+                padding: 10px;
+            }
+            .option {
+                margin-bottom: 4px;
+            }
+            .smcx-show {
+                display: inline-block!important;
+                height: 250px!important;
+                border: 1px solid #333E48!important;
+            }
+            .smcx-iframe-container {
+                height: 215px!important;
+            }
+        </style>
+	</head>
+	<body>
+        <div class="logo-container">
+            <img src="img/ts-text-64.png">
+        </div>
+        <h3>TouchStadia for desktop</h3>
+        <a href="https://chrome.google.com/webstore/detail/touchstadia/kdkboloommjpbahkdlhengbghlhcejaj"><img src="img/cws-badge.png"></a>
+        <hr/>
+        <h3>TouchStadia for Android snippet (0.0.25)</h3>
+        <textarea id="snip-container" rows="16" cols="50"></textarea>
+        <form id="settings-form">
+            <div class="option">
+                <button type="button" id="reset-stored-settings" style="display: none;">Reset to defaults</button>
+            </div>
+            <div class="option">
+                <label for="stick-radius">Stick radius</label>
+                <input type="number" id="stick-radius" value="70">
+            </div>
+            <div class="option">
+                <label for="button-diameter">Button diameter</label>
+                <input type="number" id="button-diameter" value="50">
+            </div>
+            <div class="option">
+                <label for="button-border-left-offset">Left offset</label>
+                <input type="number" id="button-border-left-offset" value="30">
+            </div>
+            <div class="option">
+                <label for="button-border-right-offset">Right offset</label>
+                <input type="number" id="button-border-right-offset" value="30">
+            </div>
+            <div class="option">
+                <label for="button-border-top-offset">Top offset</label>
+                <input type="number" id="button-border-top-offset" value="80">
+            </div>
+            <div class="option">
+                <label for="button-border-bottom-offset">Bottom offset</label>
+                <input type="number" id="button-border-bottom-offset" value="30">
+            </div>
+            <div class="option">
+                <label for="opacity">Opacity (0-255)</label>
+                <input type="number" id="opacity" min="0" max="255" value="255">
+            </div>
+            <div class="option">
+                <label for="enable-colors">Enable colors</label>
+                <input type="checkbox" id="enable-colors" checked>
+            </div>
+            <div class="option">
+                <label for="enable-draw-sticks">Draw sticks (causes lag)</label>
+                <input type="checkbox" id="enable-draw-sticks">
+            </div>
+        </form>
+        <hr/>
+        <h3>GitHub repository</h3>
+        <a href="https://github.com/ihatecsv/TouchStadia"><img src="img/github-badge.png" height="64px"></a>
+        <hr/>
+        <p>TouchStadia is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Google Stadia, Google LLC, Alphabet Inc., or any of their subsidiaries or affiliates.</p>
+        <script>
+            let snipBefore = "";
+            let snipAfter = "";
+            fetch("snip-split.js").then(res => res.text()).then((res) => {
+                gotData(res);
+            }).catch(err => console.log(err));
+            
+            const settingsFormElem = document.getElementById("settings-form");
+            const stickRadiusElem = document.getElementById("stick-radius");
+            const buttonDiameterElem = document.getElementById("button-diameter");
+            const buttonBorderLeftOffsetElem = document.getElementById("button-border-left-offset");
+            const buttonBorderRightOffsetElem = document.getElementById("button-border-right-offset");
+            const buttonBorderTopOffsetElem = document.getElementById("button-border-top-offset");
+            const buttonBorderBottomOffsetElem = document.getElementById("button-border-bottom-offset");
+            const opacityElem = document.getElementById("opacity");
+            const enableColorsElem = document.getElementById("enable-colors");
+            const enableDrawSticksElem = document.getElementById("enable-draw-sticks");
+            const resetStoredSettingsElem = document.getElementById("reset-stored-settings");
+
+            const gotData = function(res){
+                const splitSnip = res.split("|#|");
+                snipBefore = splitSnip[0];
+                snipAfter = splitSnip[1];
+                updateSnip();
+            }
+
+            const updateSnip = function(){
+                const options = {
+                    stickRadius: parseInt(stickRadiusElem.value),
+                    buttonDiameter: parseInt(buttonDiameterElem.value),
+                    buttonBorderLeftOffset: parseInt(buttonBorderLeftOffsetElem.value),
+                    buttonBorderRightOffset: parseInt(buttonBorderRightOffsetElem.value),
+                    buttonBorderTopOffset: parseInt(buttonBorderTopOffsetElem.value),
+                    buttonBorderBottomOffset: parseInt(buttonBorderBottomOffsetElem.value),
+                    opacity: parseInt(opacityElem.value),
+                    enableColors: enableColorsElem.checked,
+                    enableDrawSticks: enableDrawSticksElem.checked,
+                    disableTouchStadia: false,
+                    buttonConfig: null,
+                    extUrl: "https://birdy.xn--9xa.network/ts/"
+                };
+                const optionsString = JSON.stringify(options);
+                const preppedOptionsString = optionsString.slice(1, optionsString.length-1);
+
+                document.getElementById("snip-container").value = snipBefore + preppedOptionsString + snipAfter;
+            }
+
+            const updateInputs = function(settings){
+                stickRadiusElem.value = settings.stickRadius;
+                buttonDiameterElem.value = settings.buttonDiameter;
+                buttonBorderLeftOffsetElem.value = settings.buttonBorderLeftOffset;
+                buttonBorderRightOffsetElem.value = settings.buttonBorderRightOffset;
+                buttonBorderTopOffsetElem.value = settings.buttonBorderTopOffset;
+                buttonBorderBottomOffsetElem.value = settings.buttonBorderBottomOffset;
+                opacityElem.value = settings.opacity;
+                enableColorsElem.checked = settings.enableColors;
+                enableDrawSticksElem.checked = settings.enableDrawSticks;
+            }
+
+            const updateStoredSettings = function(){
+                resetStoredSettingsElem.style.display = "initial";
+                const newStoredSettings = {
+                    stickRadius: parseInt(stickRadiusElem.value),
+                    buttonDiameter: parseInt(buttonDiameterElem.value),
+                    buttonBorderLeftOffset: parseInt(buttonBorderLeftOffsetElem.value),
+                    buttonBorderRightOffset: parseInt(buttonBorderRightOffsetElem.value),
+                    buttonBorderTopOffset: parseInt(buttonBorderTopOffsetElem.value),
+                    buttonBorderBottomOffset: parseInt(buttonBorderBottomOffsetElem.value),
+                    opacity: parseInt(opacityElem.value),
+                    enableColors: enableColorsElem.checked,
+                    enableDrawSticks: enableDrawSticksElem.checked
+                };
+                const newStoredSettingsStr = JSON.stringify(newStoredSettings);
+                window.localStorage.setItem("ts-settings", newStoredSettingsStr);
+            }
+
+            const checkIfSettingsSet = function(){
+                const storedSettingsStr = window.localStorage.getItem("ts-settings");
+                if(storedSettingsStr !== null){
+                    const storedSettings = JSON.parse(storedSettingsStr);
+                    updateInputs(storedSettings);
+                    updateSnip();
+                    resetStoredSettingsElem.style.display = "initial";
+                }
+            }
+
+            const inputElems = document.getElementsByTagName("input");
+            for(let i = 0; i < inputElems.length; i++){
+                inputElems[i].addEventListener("keyup", function(){
+                    updateStoredSettings();
+                    updateSnip();
+                });
+                inputElems[i].addEventListener("change", function(){
+                    updateStoredSettings();
+                    updateSnip();
+                });
+            }
+
+            checkIfSettingsSet();
+
+            resetStoredSettingsElem.addEventListener("click", function(){
+                const lolYeahTheyreSure = confirm("Are you sure you want to reset to defaults?");
+                if(!lolYeahTheyreSure) return;
+                settingsFormElem.reset();
+                resetStoredSettingsElem.style.display = "none";
+                window.localStorage.removeItem("ts-settings");
+                updateSnip();
+            });
+
+        </script>
+    </body>
+</html>
+
