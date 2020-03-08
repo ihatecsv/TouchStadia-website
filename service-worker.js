@@ -4,6 +4,7 @@ const filesToCache = [
     'index.html',
     'img/cws-badge.png',
     'img/github-badge.png',
+    'img/ts-icon-192.png',
     'img/ts-text-64.png',
     'favicon.ico',
     'snip-split.js',
