@@ -52,6 +52,9 @@
         <hr/>
         <h3>TouchStadia for Android snippet (0.0.25)</h3>
         <textarea id="snip-container" rows="16" cols="50"></textarea>
+        <div>
+            <button id="clipboard">Copy to Clipboard</button>
+        </div>
         <form id="settings-form">
             <div class="option">
                 <button type="button" id="reset-stored-settings" style="display: none;">Reset to defaults</button>
@@ -210,7 +213,12 @@
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('service-worker.js');
             }
-
+          
+            document.getElementById("clipboard").addEventListener("click", function() {
+                updateSnip();
+                document.getElementById("snip-container").select();
+                document.execCommand("copy");
+            });
         </script>
     </body>
 </html>
