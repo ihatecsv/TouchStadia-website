@@ -13,6 +13,8 @@
 		<meta charset="utf8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#ff7f2a"/>
         <title>TouchStadia</title>
         <style>
             body {
@@ -208,12 +210,15 @@
                 updateSnip();
             });
 
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js');
+            }
+          
             document.getElementById("clipboard").addEventListener("click", function() {
                 updateSnip();
                 document.getElementById("snip-container").select();
                 document.execCommand("copy");
             });
-
         </script>
     </body>
 </html>
